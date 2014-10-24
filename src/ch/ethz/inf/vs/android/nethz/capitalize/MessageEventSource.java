@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import android.os.Bundle;
+import android.os.Message;
+
 import ch.ethz.inf.vs.android.nethz.capitalize.Utils.MessageEventType;
 
 /**
@@ -63,6 +66,9 @@ public class MessageEventSource {
 		 */
 		public void dispatchEvent() {
 			// TODO Fill me with events to dispatch to the listener
+			for(MessageEventListener m : eventListenerList) {
+				//m.onReceiveMessage(this);
+			}
 		}
 	}
 	

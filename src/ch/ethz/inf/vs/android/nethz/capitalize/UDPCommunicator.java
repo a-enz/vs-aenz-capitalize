@@ -1,6 +1,16 @@
 package ch.ethz.inf.vs.android.nethz.capitalize;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+
 import org.json.JSONObject;
+
+import android.util.Log;
 
 /**
  * This class should be used to interface with the server
@@ -10,7 +20,8 @@ import org.json.JSONObject;
  */
 public class UDPCommunicator {
 	// TODO: Add the necessary objects
-
+	private DatagramSocket socket;
+	private final String TAG = "UDPCommunicator";
 	/**
 	 * Constructor
 	 */
@@ -26,7 +37,24 @@ public class UDPCommunicator {
 	public boolean setupConnection() {
 		// TODO Setup the connection with the server and make sure to bind the
 		// socket
-		return false;
+		try {
+			socket = new DatagramSocket();	//Bind is already done here
+			//TODO set buffersizes etc...
+			socket.setSoTimeout(Utils.RESPONSE_TIMEOUT);
+			socket.setReceiveBufferSize(Utils.RECEIVE_BUFFER_SIZE);
+			socket.connect(InetAddress.getByName(Utils.SERVER_ADDRESS), Utils.SERVER_PORT);
+			Log.d(TAG, "Socket bound: " + socket.isBound());
+			Log.d(TAG, "Socket connected:" + socket.isConnected());
+		} catch (SocketException e) {
+			e.printStackTrace();
+			Log.d(TAG, "Socket messed up");
+			return false;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			Log.d(TAG, "Host not found");
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -36,4 +64,23 @@ public class UDPCommunicator {
 	public void sendRequest(JSONObject request) {
 		// TODO Implement sending the JSONObject to the server
 	}
+	
+	/**
+	 * Hand-made send function, because dat above ain't no good for task 1
+	 * @param text
+	 * @throws IOException 
+	 */
+	public void sendRequest(String text) throws IOException {
+		byte[] msg = text.getBytes(Charset.defaultCharset());
+		int length = msg.length;
+		socket.send(new DatagramPacket(msg, length));
+	}
+	
+	public String receiveAnswer() throws IOException {
+		DatagramPacket res = new DatagramPacket(new byte[Utils.RECEIVE_BUFFER_SIZE], Utils.RECEIVE_BUFFER_SIZE);
+		socket.receive(res);
+		return new String(res.getData(), Charset.defaultCharset());
+	}
+	
+	
 }

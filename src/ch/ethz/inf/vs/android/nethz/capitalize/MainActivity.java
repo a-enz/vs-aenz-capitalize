@@ -1,13 +1,18 @@
 package ch.ethz.inf.vs.android.nethz.capitalize;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import ch.ethz.inf.vs.android.nethz.capitalize.MessageEventSource.ChatEvent;
 import ch.ethz.inf.vs.android.nethz.chat.R;
 
 /**
@@ -32,6 +37,9 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 	DisplayMessageAdapter adapter;
 
 	// TODO Add some more views to control the sending of the messages
+	private final String TAG = "MainActivity";
+	private EditText myText;
+	private ListView messageView;
 
 	
 	@Override
@@ -46,6 +54,15 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		StrictMode.setThreadPolicy(policy);
 		setContentView(R.layout.activity_main);
 		this.logic = new MessageLogic(this);
+		logic.addMessageEventListener(this);
+		
+		myText = (EditText) findViewById(R.id.text);
+		
+		displayMessages = new ArrayList<DisplayMessage>();
+		adapter = new DisplayMessageAdapter(this, displayMessages);
+		messageView = (ListView) findViewById(android.R.id.list);
+		messageView.setAdapter(adapter);
+		
 	}
 
 	@Override
@@ -58,7 +75,33 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 	 * This should be a clean exit. Think about what should be closed.
 	 */
 	public void onBackPressed() {
+		super.onBackPressed();
 		// TODO Make sure to quit when the user presses on Back and to
 		// quit the app cleanly.
+	}
+	
+	public void sendMessage(View v) throws IOException {
+		String text;
+		DisplayMessage bubble;
+		if(!(text = myText.getText().toString()).equals("")) {
+			Log.d(TAG, "sendMessage triggered with: " + text);
+			myText.setText("");
+			bubble = new DisplayMessage(text, Utils.USER, true);
+			logic.sendMessage(text);
+			displayMessages.add(bubble);
+			adapter.notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void onReceiveMessage(ChatEvent e) {
+		String text;
+		DisplayMessage bubble;
+		if(e.getType() == Utils.MessageEventType.MESSAGE_RECEIVED) {
+			bubble = new DisplayMessage(e.message, Utils.USER, false);
+			displayMessages.add(bubble);
+			adapter.notifyDataSetChanged();
+		}
+		
 	}
 }
