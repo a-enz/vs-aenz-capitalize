@@ -16,12 +16,14 @@ public class Utils {
 	/*
 	 * Change me... Some useful constants
 	 */
-	public final static String SERVER_ADDRESS = "";
-	public final static int SERVER_PORT = -1;
-	public final static int RECEIVE_BUFFER_SIZE = -1;
+	public final static String SERVER_ADDRESS = "129.132.75.194";
+	public final static int SERVER_PORT = 4000;
+	public final static int RECEIVE_BUFFER_SIZE = 4096;
 	public final static int SOCKET_TIMEOUT = -1;
-	public final static int RESPONSE_TIMEOUT = -1;
+	public final static int RESPONSE_TIMEOUT = 1000;
 	public final static int MESSAGE_TIMEOUT = -1;
+	public final static String USER = "BrutalWargasm";
+	public final static String MSGTAG = "Omelette du fromage";
 	
 	/**
 	 * Similary to task 2 and as hint for the type of

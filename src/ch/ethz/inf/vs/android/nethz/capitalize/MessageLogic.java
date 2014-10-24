@@ -1,10 +1,15 @@
 package ch.ethz.inf.vs.android.nethz.capitalize;
 
+import java.io.IOException;
 import java.io.Serializable;
+
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 
 @SuppressLint("UseSparseArrays")
 /**
@@ -43,13 +48,20 @@ public class MessageLogic extends MessageEventSource implements Serializable{
 	 * displayed in the view.
 	 */
 	Logger log;
+	
+	private boolean listening;
 
 	/**
 	 * Constructor
 	 * @param context The calling activity
 	 */
 	public MessageLogic(Context context) {
+		appContext = context;
 		this.initLogger();
+		listening = true;
+		comm = new UDPCommunicator();
+		comm.setupConnection();
+		new Receiver().execute(new String[]{});
 	}
 
 	/**
@@ -57,5 +69,28 @@ public class MessageLogic extends MessageEventSource implements Serializable{
 	 */
 	public void initLogger() {
 		this.log = new Logger(appContext);
+	}
+	
+	public void sendMessage(String text){
+		comm.sendRequest(text);
+	}
+	
+	private class Receiver extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			String msg;
+			ChatEvent event;
+			while(listening) {
+				try {
+					msg = comm.receiveAnswer();
+					event = new ChatEvent(this, Utils.MessageEventType.MESSAGE_RECEIVED , msg, null);
+					event.dispatchEvent();
+				} catch (IOException e) {
+				}
+			}
+			return "finished";
+		}
+		
 	}
 }

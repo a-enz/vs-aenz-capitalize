@@ -2,7 +2,10 @@ package ch.ethz.inf.vs.android.nethz.capitalize;
 
 import java.util.EventListener;
 
+import ch.ethz.inf.vs.android.nethz.capitalize.MessageEventSource.ChatEvent;
+
 import android.os.Handler;
+import android.os.Message;
 
 /**
  * This class provides a wrapper for events to be triggered
@@ -17,6 +20,13 @@ public interface MessageEventListener extends EventListener {
 	 * logic.
 	 */
 	final Handler callbackHandler = new Handler();
+//	final Handler callbackHandler = new Handler() {
+//		
+//		@Override
+//		public void handleMessage(Message msg) {
+//			msg.getData().g
+//		}
+//	};
 	
 	/**
 	 * Function that returns the callback handler
@@ -25,4 +35,7 @@ public interface MessageEventListener extends EventListener {
 	public Handler getCallbackHandler();
 	
 	// TODO Add all necessary event triggers
+	
+	public abstract void onReceiveMessage(ChatEvent e);
+	
 }
