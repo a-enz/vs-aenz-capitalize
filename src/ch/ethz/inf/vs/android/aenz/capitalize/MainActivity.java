@@ -83,8 +83,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 	 */
 	public void onBackPressed() {
 		super.onBackPressed();
-		// TODO Make sure to quit when the user presses on Back and to
-		// quit the app cleanly.
+		logic.close();
 	}
 	
 	
@@ -103,7 +102,6 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 
 	@Override
 	public void onReceiveMessage(ChatEvent e) {
-		String text;
 		DisplayMessage bubble;
 		if(e.getType() == Utils.MessageEventType.MESSAGE_RECEIVED) {
 			bubble = new DisplayMessage(e.message, "Server", false);
@@ -111,7 +109,6 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 			this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					adapter.notifyDataSetChanged();
 				}	
 			});
