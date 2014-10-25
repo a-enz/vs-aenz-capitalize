@@ -53,6 +53,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 		setContentView(R.layout.activity_main);
+		//this.callbackHandler.getLooper().p
 		this.logic = new MessageLogic(this);
 		logic.addMessageEventListener(this);
 		
@@ -63,6 +64,12 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		messageView = (ListView) findViewById(android.R.id.list);
 		messageView.setAdapter(adapter);
 		
+	}
+	
+	@Override
+	public void onStop() {
+		logic.close();
+		super.onStop();
 	}
 
 	@Override
@@ -79,6 +86,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		// TODO Make sure to quit when the user presses on Back and to
 		// quit the app cleanly.
 	}
+	
 	
 	public void sendMessage(View v) throws IOException {
 		String text;
@@ -100,14 +108,13 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		if(e.getType() == Utils.MessageEventType.MESSAGE_RECEIVED) {
 			bubble = new DisplayMessage(e.message, "Server", false);
 			displayMessages.add(bubble);
-//			getCallbackHandler().post(new Runnable() {
-//				@Override
-//				public void run() {
-//					// TODO Auto-generated method stub
-//					adapter.notifyDataSetChanged();
-//				}	
-//			});
-			adapter.notifyDataSetChanged();
+			this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					adapter.notifyDataSetChanged();
+				}	
+			});
 		}
 		
 	}

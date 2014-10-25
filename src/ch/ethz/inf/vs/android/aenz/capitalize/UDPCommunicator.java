@@ -83,6 +83,10 @@ public class UDPCommunicator {
 		socket.receive(res);
 		return new String(res.getData(), Charset.defaultCharset());
 	}
+
+	public void close() {
+		socket.close();
+	}
 	
 	
 }

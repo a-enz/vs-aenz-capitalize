@@ -62,6 +62,7 @@ public class MessageLogic extends MessageEventSource implements Serializable{
 		listening = true;
 		comm = new UDPCommunicator();
 		//Log.d(TAG, "aflbsölfdkj");
+		
 		new Receiver().execute(new String[]{});
 	}
 
@@ -98,5 +99,11 @@ public class MessageLogic extends MessageEventSource implements Serializable{
 			return "finished";
 		}
 		
+	}
+
+
+	public void close() {
+		listening = false;
+		comm.close();
 	}
 }
