@@ -87,10 +87,12 @@ public class MessageLogic extends MessageEventSource implements Serializable{
 			Log.d(TAG, "Receiver started");
 			while(listening) {
 				try {
-					msg = comm.receiveAnswer();
-					Log.d(TAG, "Received");
-					event = new ChatEvent(this, Utils.MessageEventType.MESSAGE_RECEIVED , msg, null);
-					event.dispatchEvent();
+					msg = comm.receiveAnswer().trim();
+					Log.d(TAG, "Received " + msg.length() + " characters");
+					if (!msg.equals("")){
+						event = new ChatEvent(this, Utils.MessageEventType.MESSAGE_RECEIVED , msg, null);
+						event.dispatchEvent();
+					}
 				} catch (IOException e) {
 					Log.d(TAG, "adsralkj");
 					e.printStackTrace();
