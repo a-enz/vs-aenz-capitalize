@@ -40,6 +40,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 	private final String TAG = "MainActivity";
 	private EditText myText;
 	private ListView messageView;
+	private Logger log;
 
 	
 	@Override
@@ -63,6 +64,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		adapter = new DisplayMessageAdapter(this, displayMessages);
 		messageView = (ListView) findViewById(android.R.id.list);
 		messageView.setAdapter(adapter);
+		log = new Logger(this);
 		
 	}
 	
@@ -96,6 +98,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 			bubble = new DisplayMessage(text, Utils.USER, true);
 			logic.sendMessage(text);
 			displayMessages.add(bubble);
+			log.logReadyMsg(bubble, false);
 			adapter.notifyDataSetChanged();
 		}
 	}
@@ -106,6 +109,7 @@ public class MainActivity extends ListActivity implements MessageEventListener {
 		if(e.getType() == Utils.MessageEventType.MESSAGE_RECEIVED) {
 			bubble = new DisplayMessage(e.message, "Server", false);
 			displayMessages.add(bubble);
+			log.logReadyMsg(bubble, true);
 			this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
